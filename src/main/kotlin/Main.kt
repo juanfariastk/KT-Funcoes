@@ -1,129 +1,155 @@
-package br.ifpb.pdm.praticas
+/*
+//////////////////////////
+Leia o escopo do main para entender o que deverá ser feito na atividade;
+//////////////////////////
+*/
 
-class Livro(var titulo: String, var preco: Double) {
-    override fun toString(): String {
-        return "Livro: Titulo = $titulo, Preco = $preco"
+val materiasENotas = mutableMapOf<String, MutableList<Double>>()
+
+/**
+ * Adiciona uma disciplina no dicionário mutável,
+ * Recebe um array de notas (opcional)
+ * Retorna true se conseguiu, false se não.
+ */
+fun adicionarDisciplinaPosicional(materia: String, notas: MutableList<Double>): Boolean {
+    if (materiasENotas.size < 3) {
+        materiasENotas[materia] = notas
+        return true
     }
+    return false
 }
+/**
+ * Adiciona uma nota à lista de notas de uma determinada matéria;
+ * Retorna true se conseguiu adicionar, false se não conseguiu.
+ */
+fun adicionarNota(materia: String, nota: Double): Boolean {
+    val notasDaMateria = materiasENotas[materia]
 
-fun menu() {
-    println("1 - Cadastrar livro")
-    println("2 - Excluir livro")
-    println("3 - Buscar livro")
-    println("4 - Editar livro")
-    println("5 - Listar livros")
-    println("6 - Listar livros que começam com letra escolhida")
-    println("7 - Listar livros com preço abaixo do informado")
-    println("8 - Sair")
-}
-
-fun inputTitulo(): String {
-    print("Digite o titulo do livro: ")
-    return readlnOrNull() ?:""
-}
-
-fun inputPreco(): Float {
-    print("Digite o preco do livro: ")
-    val preco = readlnOrNull()!!.toFloat()
-
-    return preco
-}
-
-fun cadastrarLivro(repositorio: MutableList<Livro>) {
-    val titulo = inputTitulo()
-    val preco = inputPreco()
-
-    repositorio.add(Livro(titulo, preco.toDouble()))
-    println("\nCadastrado com sucesso!\n")
-}
-
-fun excluirLivro(repositorio: MutableList<Livro>) {
-    val livro = buscarNome(repositorio)
-    repositorio.remove(livro)
-    println("Livro removido com sucesso!")
-}
-
-fun buscarNome(repositorio: MutableList<Livro>): Livro? {
-    val titulo = inputTitulo()
-    return repositorio.find { it.titulo == titulo }
-}
-
-fun editarLivro(repositorio: MutableList<Livro>) {
-    val livro = buscarNome(repositorio) ?: return
-
-    var novoTitulo = inputTitulo()
-    var novoPreco = inputPreco()
-
-    livro.titulo = novoTitulo
-    livro.preco = novoPreco.toDouble()
-
-    println("Livro editado com sucesso!")
-}
-
-
-fun listar(repositorio: MutableList<Livro>) {
-    if (repositorio.isEmpty()) {
-        println("Nenhum livro cadastrado!")
-        return
-    }
-
-    println("Lista de livros:")
-    for (livro in repositorio) {
-        println(livro)
-    }
-}
-
-fun listarComLetraInicial(repositorio: MutableList<Livro>) {
-    print("Informe a letra: ")
-    var letra = readlnOrNull() ?:""
-
-    while(letra.length > 1) {
-        print("Informe apenas uma letra: ")
-        letra = readlnOrNull() ?:""
-    }
-
-    if(letra != "") {
-        val livros = repositorio.filter { it.titulo.startsWith(letra) }
-        livros.forEach {println(it)}
+    return if (notasDaMateria != null) {
+        notasDaMateria.add(nota)
+        true
     } else {
-        println("É necessário informar pelo menos um caracter para esta função executar!")
+        false
     }
 }
 
-fun listarComPrecoAbaixo(repositorio: MutableList<Livro>) {
-    val preco = inputPreco()
-    val livros = repositorio.filter { it.preco < preco }
-    livros.forEach { println(it) }
+
+//mostrarNotas
+
+
+
+fun adicionarDisciplinaNomeada(materia: String, vararg notas: Double): Boolean {
+    if (materiasENotas.size < 3) {
+        materiasENotas[materia] = notas.toMutableList()
+        return true
+    }
+    return false
 }
+
+// adicionar disciplina:
+
+fun adicionarDisciplina(materia: String, notas: MutableList<Double> = mutableListOf()): Boolean {
+    if (materiasENotas.size < 3) {
+        materiasENotas[materia] = notas
+        return true
+    }
+    return false
+}
+
+
+//Disciplinas sem notas
+
+fun adicionarDisciplinaSemNotas(materia: String): Boolean {
+    if (materiasENotas.size < 3) {
+        materiasENotas[materia] = mutableListOf()
+        return true
+    }
+    return false
+}
+
+//AC
+
+
+/**
+ *Mostra na tela todas as notas presentes em uma matéria, no seguinte formato:
+ * Materia: {nome da materia}
+ * Nota 1: 5.4 \n
+ * Nota 2: 7.8 \n
+ * ...
+ * Nota n: 10.0 \n
+ * \n
+ * Média:  {5.4 + 7.8 + ... + 10.0 / n} \n [TO DO <////////]
+ * \n
+ *
+ * Caso não encontre a materia no map, mostre:
+ * Materia {nome da materia} não encontrada \n
+ *
+ * Caso não seja possível mostar as notas, mostre:
+ * Não foi possível mostrar as notas da matéria {nome da materia} \n
+ */
+fun mostrarNotas(materia: String) {
+    val notasDaMateria = materiasENotas[materia] ?: return
+
+    println("Matéria: $materia")
+    var cont = 1
+    for (nota in notasDaMateria) {
+        println("Nota ${cont++}: $nota")
+    }
+
+    val media = calcularMedia(notasDaMateria)
+    println("Média: $media")
+
+    println()
+}
+
+//calcular média
+
+fun calcularMedia(notas: List<Double>): Double {
+    if (notas.isEmpty()) return 0.0
+
+    var soma = 0.0
+    for (nota in notas) {
+        soma += nota
+    }
+
+    return soma / notas.size
+}
+
+
+/**
+ *Adiciona várias notas de uma só vez em uma matéria
+ * retorne true se conseguiu adicionar, false se não consegiu.
+ * */
+fun adicionarVariasNotas(materia: String, vararg notas: Double): Boolean {
+    val notasDaMateria = materiasENotas[materia] ?: return false
+    notasDaMateria.addAll(notas.toMutableList())
+    return true
+}
+
 
 fun main() {
-    val repositorioLivros = mutableListOf<Livro>()
-    repositorioLivros.add(Livro("Livro dos Livros", 999999.99))
-    repositorioLivros.add(Livro("Turma da Monica", 4.99))
-    repositorioLivros.add(Livro("Kotlin for Dummies", 29.99))
-    repositorioLivros.add(Livro("A", 59.99))
-    listar(repositorioLivros)
 
-    var opcao = 0
-    while (opcao != 8) {
-        menu()
-        println(repositorioLivros[0])
-        print("Digite a opção: ")
-        opcao = readlnOrNull()?.toInt() ?:8
+    // Adicionando disciplinas com diferentes métodos:
 
-        when (opcao) {
-            1 -> cadastrarLivro(repositorioLivros)
-            2 -> excluirLivro(repositorioLivros)
-            3 -> {
-                val livro = buscarNome(repositorioLivros)
-                println(livro)
-            }
-//            4 ->
-            5 -> listar(repositorioLivros)
-            6 -> listarComLetraInicial(repositorioLivros)
-            7 -> listarComPrecoAbaixo(repositorioLivros)
-            8 -> println("Até a próxima :)")
-        }
-        Thread.sleep(3000)
-    }
+    adicionarDisciplinaPosicional("Matemática", mutableListOf(8.5, 7.0, 9.5))
+    adicionarDisciplinaNomeada("Física", 7.8, 9.2, 8.5)
+    adicionarDisciplinaSemNotas("História")
+
+    // Adicionando notas:
+
+    adicionarNota("Matemática", 10.0)
+    adicionarVariasNotas("Física", 6.5, 8.0)
+
+    // Mostrando notas:
+
+    mostrarNotas("Matemática")
+    mostrarNotas("Física")
+    mostrarNotas("História")
+
+    // Adicionando e mostrando notas de uma nova disciplina:
+
+    adicionarDisciplina("Biologia")
+    adicionarVariasNotas("Biologia", 8.0, 7.5, 9.0)
+    mostrarNotas("Biologia")
 }
+
